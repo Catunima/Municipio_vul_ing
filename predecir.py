@@ -27,7 +27,19 @@ quartile2 = vul_ing.iloc[vul_row //2 : 3*(vul_row // 4)]
 quartile3 = vul_ing.tail(vul_row // 4)
 
 df['lvl_vul_ing'] = 'other'
-df.loc[(df['N_vul_ing'] >= quartile['N_vul_ing'].max()) & (df['N_vul_ing'] <= quartile['N_vul_ing'].min()), 'lvl_vul_ing'] = 'very_high'
+df.loc[(df['N_vul_ing'].index >= quartile['N_vul_ing'].max()) & (df['N_vul_ing'] <= quartile['N_vul_ing'].min()), 'lvl_vul_ing'] = 'very_high'
+df.loc[(df['N_vul_ing'].index >= quartile1['N_vul_ing'].max()) & (df['N_vul_ing'] <= quartile1['N_vul_ing'].min()), 'lvl_vul_ing'] = 'high'
+df.loc[(df['N_vul_ing'].index >= quartile2['N_vul_ing'].max()) & (df['N_vul_ing'] <= quartile2['N_vul_ing'].min()), 'lvl_vul_ing'] = 'medium'
+df.loc[(df['N_vul_ing'].index > quartile3['N_vul_ing'].max()) & (df['N_vul_ing'] < quartile3['N_vul_ing'].min()), 'lvl_vul_ing'] = 'low'
+maxi = quartile1['N_vul_ing'].max()
+mini = quartile1['N_vul_ing'].min()
+df['lvl_vul_ing'] = (df['N_vul_ing'].index <= mini).astype(int)
+
+
+print(quartile['N_vul_ing'].max())
+print(quartile1['N_vul_ing'].max())
+print(quartile1['N_vul_ing'].min())
+print(df[['N_vul_ing','lvl_vul_ing']].head(10))
 #division de columnas por partes
 #df['very_high'] = (vul_ing.index < quartile).astype(int)
 #df['high'] = (quartile <= vul_ing.index) & (vul_ing.index < 2 * quartile).astype(int)
