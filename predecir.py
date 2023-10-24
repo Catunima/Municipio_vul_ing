@@ -30,13 +30,13 @@ second_limit = 60000
 ct = 0
 
 # Lista de sufijos de años a eliminar
-years = ["00","05","10","_00", "_05", "_10"]
+years = ["90","00","05","10","_00", "_05", "_10", "_90"]
 
 # Filtra las columnas que no terminan con los sufijos de años y crea un nuevo DataFrame
 new_df = df[[col for col in df.columns if not col.endswith(tuple(years))]]
 
 # Ahora df_sin_años contiene solo las columnas que no están relacionadas con años
-new_df = new_df.drop(columns=['nom_ent','clave_mun','mun',''])
+new_df = new_df.drop(columns=['nom_ent','clave_mun','mun','nom_mun'])
 new_df['has_vul'] = 0
 
 while ct != len(new_df['N_vul_ing']):
@@ -48,28 +48,13 @@ while ct != len(new_df['N_vul_ing']):
 new_df['yes'] = (new_df['has_vul'] == 1).astype(int)
 new_df['no'] = (new_df['has_vul'] == 0).astype(int)
 
-print(new_df[['N_vul_ing','has_vul','yes','no']].head(15))
-#division de columnas por partes
-#df['very_high'] = (vul_ing.index < quartile).astype(int)
-#df['high'] = (quartile <= vul_ing.index) & (vul_ing.index < 2 * quartile).astype(int)
-#df['medium'] = (2 * quartile <= vul_ing.index) & (vul_ing.index < 3 * quartile).astype(int)
-#df['low'] = (3 * quartile <= vul_ing.index) & (vul_ing.index < 4 * quartile).astype(int)
-##!limpieza de outliers
-#plt.figure(figsize=(10, 6))
-"""sns.snsplot(data=df,kind="bar", height=7, aspect=2)
-plt.xticks(rotation=90)
-plt.show()
-"""
-#data = df[df['N_vul_ing']]
-#print(data)
-#print(df.columns)
-""""
-plt.subplot(1,2,1)
-plt.title('N vul ing')
-plt.hist(data['N_vul_ing'],edgecolor ='black')
+#print(new_df[['N_vul_ing','has_vul','yes','no']].head(15))
+# Lista de columnas en el orden deseado (sin "has_vul")
+columnas_ordenadas = [col for col in new_df.columns if col != 'has_vul']
 
-plt.subplot(1,2,2)
-plt.boxplot(data['N_vul_ing'],vert=True)
+# Agrega 'has_vul' al final de la lista de columnas
+columnas_ordenadas.append('has_vul')
 
-plt.tight_layout() 
-plt.show()"""
+# Crea un nuevo DataFrame con las columnas en el orden deseado
+dataframe = new_df[columnas_ordenadas]
+print(dataframe.columns)
