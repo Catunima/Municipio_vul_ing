@@ -58,3 +58,17 @@ columnas_ordenadas.append('has_vul')
 # Crea un nuevo DataFrame con las columnas en el orden deseado
 dataframe = new_df[columnas_ordenadas]
 print(dataframe.columns)
+
+#!Separacion de datos de datafram por x y y para entrenamiento de modelos
+# Dividir el DataFrame en entrenamiento (80%) y prueba (20%)
+train_size = int(0.8 * len(dataframe))
+train_data = dataframe[:train_size]
+test_data = dataframe[train_size:]
+
+# Separar las características (X) y la variable objetivo (y)
+X_train = train_data.drop(columns=['has_vul'])  # Quita la columna 'has_vul' de las características
+y_train = train_data['has_vul']  # Variable objetivo
+
+X_test = test_data.drop(columns=['has_vul'])  # Quita la columna 'has_vul' de las características
+y_test = test_data['has_vul']  # Variable objetivo
+
