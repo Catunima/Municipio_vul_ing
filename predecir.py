@@ -29,18 +29,26 @@ first_limit = 181621
 second_limit = 60000
 ct = 0
 
+# Lista de sufijos de años a eliminar
+years = ["00","05","10","_00", "_05", "_10"]
 
-df['has_vul'] = 0
+# Filtra las columnas que no terminan con los sufijos de años y crea un nuevo DataFrame
+new_df = df[[col for col in df.columns if not col.endswith(tuple(years))]]
 
-while ct != len(df['N_vul_ing']):
+# Ahora df_sin_años contiene solo las columnas que no están relacionadas con años
+new_df = new_df.drop(columns=['nom_ent','clave_mun','mun',''])
+new_df['has_vul'] = 0
+
+while ct != len(new_df['N_vul_ing']):
     value = df['N_vul_ing'].iloc[ct]
     if value >= second_limit:
-        df['has_vul'].iloc[ct] = 1
+        new_df['has_vul'].iloc[ct] = 1
     ct += 1
 
-print(df[['N_vul_ing','has_vul']].head(15))
+new_df['yes'] = (new_df['has_vul'] == 1).astype(int)
+new_df['no'] = (new_df['has_vul'] == 0).astype(int)
 
-
+print(new_df[['N_vul_ing','has_vul','yes','no']].head(15))
 #division de columnas por partes
 #df['very_high'] = (vul_ing.index < quartile).astype(int)
 #df['high'] = (quartile <= vul_ing.index) & (vul_ing.index < 2 * quartile).astype(int)
