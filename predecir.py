@@ -72,3 +72,4 @@ y_train = train_data['has_vul']  # Variable objetivo
 X_test = test_data.drop(columns=['has_vul'])  # Quita la columna 'has_vul' de las características
 y_test = test_data['has_vul']  # Variable objetivo
 
+#entrenamiendo de modelo
