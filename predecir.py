@@ -7,6 +7,7 @@ import seaborn as sns
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import metrics 
 from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.linear_model import Perceptron
 
 
 df = pd.read_csv('/media/eduardo/SSD Kingston Datos/Projects/machine_learning/pobreza/Indicadores_municipales_sabana_DA.csv', 
@@ -73,13 +74,48 @@ y_train = train_data['has_vul']  # Variable objetivo
 
 X_test = test_data.drop(columns=['has_vul'])  # Quita la columna 'has_vul' de las características
 y_test = test_data['has_vul']  # Variable objetivo
+#!implementacion de algoritmo de knn
 
-#entrenamiendo de modelo
+def euclidean_distance(x1, x2):
+    return np.sqrt(np.sum((x1 - x2) ** 2))
+
+class KNN:
+    def __init__(self, k=3):
+        self.k = k
+
+    def fit(self, X, y):
+        self.X_train = X
+        self.y_train = y
+
+    def predict(self, X):
+        y_pred = [self._predict(x) for x in X]
+        return np.array(y_pred)
+
+    def _predict(self, x):
+        # Calcula las distancias entre x y los puntos en el conjunto de entrenamiento
+        distances = [euclidean_distance(x, x_train) for x_train in self.X_train]
+        # Ordena por distancia y devuelve las etiquetas de los primeros k vecinos
+        k_indices = np.argsort(distances)[:self.k]
+        k_nearest_labels = [self.y_train[i] for i in k_indices]
+        # Devuelve la etiqueta más común entre los k vecinos
+        most_common = np.bincount(k_nearest_labels).argmax()
+        return most_common
+
+# Usar X_train e y_train de tu conjunto de datos
+knn = KNN(k=3)
+knn.fit(X_train.values, y_train.values)
+predictions = knn.predict(X_test.values)
+print("Prediction with algorith")
+print(f'Predicción: {predictions}, Etiqueta real: {y_test.values}')
+# Puedes comparar tus predicciones con y_test para evaluar el rendimiento
+
+#!entrenamiendo de modelo
 knn = KNeighborsClassifier(n_neighbors=5)
 knn.fit(X_train, y_train)
 
 # prediction
 prediction_knn = knn.predict(X_test)
+print("Prediction with library")
 print("Prediction for test set: {}".format(prediction_knn))
 #Actual value and the predicted value
 a = pd.DataFrame({'Actual value': y_test, 'Predicted value': prediction_knn})
@@ -91,5 +127,11 @@ sns.heatmap(matrix, annot=True, fmt="d")
 plt.title('Confusion Matrix')
 plt.xlabel('Predicted')
 plt.ylabel('True')
-plt.show()
 print(classification_report(y_test, prediction_knn))
+
+#!perceptron
+
+clf = Perceptron(tol=1e-3, random_state=0)
+clf.fit(X_train,y_train)
+Perceptron()
+print(clf.predict(X_test))
