@@ -4,6 +4,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics 
+from sklearn.metrics import classification_report, confusion_matrix
 
 
 df = pd.read_csv('/media/eduardo/SSD Kingston Datos/Projects/machine_learning/pobreza/Indicadores_municipales_sabana_DA.csv', 
@@ -57,7 +60,6 @@ columnas_ordenadas.append('has_vul')
 
 # Crea un nuevo DataFrame con las columnas en el orden deseado
 dataframe = new_df[columnas_ordenadas]
-print(dataframe.columns)
 
 #!Separacion de datos de datafram por x y y para entrenamiento de modelos
 # Dividir el DataFrame en entrenamiento (80%) y prueba (20%)
@@ -73,3 +75,21 @@ X_test = test_data.drop(columns=['has_vul'])  # Quita la columna 'has_vul' de la
 y_test = test_data['has_vul']  # Variable objetivo
 
 #entrenamiendo de modelo
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_train, y_train)
+
+# prediction
+prediction_knn = knn.predict(X_test)
+print("Prediction for test set: {}".format(prediction_knn))
+#Actual value and the predicted value
+a = pd.DataFrame({'Actual value': y_test, 'Predicted value': prediction_knn})
+print(a.tail(20))
+
+#Evaluar modelo
+matrix = confusion_matrix(y_test, prediction_knn)
+sns.heatmap(matrix, annot=True, fmt="d")
+plt.title('Confusion Matrix')
+plt.xlabel('Predicted')
+plt.ylabel('True')
+plt.show()
+print(classification_report(y_test, prediction_knn))
