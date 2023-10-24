@@ -5,9 +5,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn import metrics 
+from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.linear_model import Perceptron
+
+from sklearn.model_selection import train_test_split
 
 
 df = pd.read_csv('/media/eduardo/SSD Kingston Datos/Projects/machine_learning/pobreza/Indicadores_municipales_sabana_DA.csv', 
@@ -64,7 +66,7 @@ dataframe = new_df[columnas_ordenadas]
 
 #!Separacion de datos de datafram por x y y para entrenamiento de modelos
 # Dividir el DataFrame en entrenamiento (80%) y prueba (20%)
-train_size = int(0.8 * len(dataframe))
+'''train_size = int(0.8 * len(dataframe))
 train_data = dataframe[:train_size]
 test_data = dataframe[train_size:]
 
@@ -73,7 +75,10 @@ X_train = train_data.drop(columns=['has_vul'])  # Quita la columna 'has_vul' de 
 y_train = train_data['has_vul']  # Variable objetivo
 
 X_test = test_data.drop(columns=['has_vul'])  # Quita la columna 'has_vul' de las características
-y_test = test_data['has_vul']  # Variable objetivo
+y_test = test_data['has_vul']  # Variable objetivo'''
+X = dataframe.drop(columns=['has_vul'])
+y = dataframe['has_vul']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 #!implementacion de algoritmo de knn
 
 def euclidean_distance(x1, x2):
@@ -128,9 +133,52 @@ plt.title('Confusion Matrix')
 plt.xlabel('Predicted')
 plt.ylabel('True')
 print(classification_report(y_test, prediction_knn))
+#! algoritmo de perceptron
+print('perceptron con algoritmo')
+class MiPerceptron:
+    def __init__(self, num_features):
+        # Inicializa los pesos y el sesgo (bias) de forma aleatoria
+        self.weights = np.random.rand(num_features)
+        self.bias = np.random.rand()
+        
+    def predict(self, inputs):
+        # Realiza la suma ponderada de las entradas y aplica la función de paso
+        linear_sum = self.bias + np.dot(self.weights, inputs)
+        return 1 if linear_sum >= 0 else 0
+    
+    def train(self, X, y, learning_rate=0.1, epochs=100):
+        for _ in range(epochs):
+            for i in range(X.shape[0]):
+                inputs = X[i]
+                target = y[i]
+                prediction = self.predict(inputs)
+                error = target - prediction
+                # Actualiza los pesos y el sesgo
+                self.weights += learning_rate * error * inputs
+                self.bias += learning_rate * error
+
+# Supongamos que tienes tus datos de entrenamiento en X_train y y_train
+# Asegúrate de que los datos estén en formato NumPy
+X_train = X_train.to_numpy()
+y_train = y_train.to_numpy()
+
+# Crea un perceptrón y entrénalo con los datos de entrenamiento
+mi_perceptron = MiPerceptron(num_features=X_train.shape[1])
+mi_perceptron.train(X_train, y_train)
+
+# Ahora puedes hacer predicciones en tus datos de prueba
+# Supongamos que tienes tus datos de prueba en X_test
+X_test = X_test.to_numpy()
+y_pred = [mi_perceptron.predict(inputs) for inputs in X_test]
+print("Predicciones en los datos de prueba:")
+print(y_pred)
+# Luego, puedes evaluar el rendimiento del modelo, por ejemplo, calculando la precisión
+
+accuracy = accuracy_score(y_test, y_pred)
+print("Precisión del modelo:", accuracy)
 
 #!perceptron
-
+print('perceptron library')
 clf = Perceptron(tol=1e-3, random_state=0)
 clf.fit(X_train,y_train)
 Perceptron()
