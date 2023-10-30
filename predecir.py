@@ -44,7 +44,7 @@ new_df = df[[col for col in df.columns if not col.endswith(tuple(years))]]
 # Ahora df_sin_años contiene solo las columnas que no están relacionadas con años
 new_df = new_df.drop(columns=['nom_ent','clave_mun','mun','nom_mun'])
 new_df['has_vul'] = 0
-
+ct = 0
 while ct != len(new_df['N_vul_ing']):
     value = df['N_vul_ing'].iloc[ct]
     if value >= second_limit:
@@ -66,7 +66,7 @@ dataframe = new_df[columnas_ordenadas]
 
 #!Separacion de datos de datafram por x y y para entrenamiento de modelos
 # Dividir el DataFrame en entrenamiento (80%) y prueba (20%)
-'''train_size = int(0.8 * len(dataframe))
+train_size = int(0.8 * len(dataframe))
 train_data = dataframe[:train_size]
 test_data = dataframe[train_size:]
 
@@ -75,10 +75,11 @@ X_train = train_data.drop(columns=['has_vul'])  # Quita la columna 'has_vul' de 
 y_train = train_data['has_vul']  # Variable objetivo
 
 X_test = test_data.drop(columns=['has_vul'])  # Quita la columna 'has_vul' de las características
-y_test = test_data['has_vul']  # Variable objetivo'''
+y_test = test_data['has_vul']  # Variable objetivo
+'''
 X = dataframe.drop(columns=['has_vul'])
 y = dataframe['has_vul']
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)'''
 #!implementacion de algoritmo de knn
 
 def euclidean_distance(x1, x2):
