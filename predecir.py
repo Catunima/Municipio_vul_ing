@@ -18,8 +18,6 @@ df = pd.read_csv('/media/eduardo/SSD Kingston Datos/Projects/machine_learning/po
 #se analizan las columnas y se muestran las que tienen datos faltantes
 #!eliminacion de nulos
 rows_with_null = df[df.isnull().any(axis=1)]
-#print(rows_with_null)
-
 df.bfill(inplace=True)
 df.ffill(inplace=True)
 
@@ -37,10 +35,8 @@ ct = 0
 
 # Lista de sufijos de años a eliminar
 years = ["90","00","05","10","_00", "_05", "_10", "_90"]
-
 # Filtra las columnas que no terminan con los sufijos de años y crea un nuevo DataFrame
 new_df = df[[col for col in df.columns if not col.endswith(tuple(years))]]
-
 # Ahora df_sin_años contiene solo las columnas que no están relacionadas con años
 new_df = new_df.drop(columns=['nom_ent','clave_mun','mun','nom_mun'])
 new_df['has_vul'] = 0
@@ -57,10 +53,8 @@ new_df['no'] = (new_df['has_vul'] == 0).astype(int)
 #print(new_df[['N_vul_ing','has_vul','yes','no']].head(15))
 # Lista de columnas en el orden deseado (sin "has_vul")
 columnas_ordenadas = [col for col in new_df.columns if col != 'has_vul']
-
 # Agrega 'has_vul' al final de la lista de columnas
 columnas_ordenadas.append('has_vul')
-
 # Crea un nuevo DataFrame con las columnas en el orden deseado
 dataframe = new_df[columnas_ordenadas]
 
@@ -112,8 +106,9 @@ knn = KNN(k=3)
 knn.fit(X_train.values, y_train.values)
 predictions = knn.predict(X_test.values)
 print("Prediction with algorith")
-print(f'Predicción: {predictions}, Etiqueta real: {y_test.values}')
-# Puedes comparar tus predicciones con y_test para evaluar el rendimiento
+#print(f'Predicción: {predictions}, Etiqueta real: {y_test.values}')
+accuracy = accuracy_score(y_test.values, predictions)
+print(f'Accuracy algorith: {accuracy:.2f}')
 
 #!entrenamiendo de modelo
 knn = KNeighborsClassifier(n_neighbors=5)
@@ -122,10 +117,10 @@ knn.fit(X_train, y_train)
 # prediction
 prediction_knn = knn.predict(X_test)
 print("Prediction with library")
-print("Prediction for test set: {}".format(prediction_knn))
+#print("Prediction for test set: {}".format(prediction_knn))
 #Actual value and the predicted value
 a = pd.DataFrame({'Actual value': y_test, 'Predicted value': prediction_knn})
-print(a.tail(20))
+#print(a.tail(20))
 
 #Evaluar modelo
 matrix = confusion_matrix(y_test, prediction_knn)
@@ -172,7 +167,7 @@ mi_perceptron.train(X_train, y_train)
 X_test = X_test.to_numpy()
 y_pred = [mi_perceptron.predict(inputs) for inputs in X_test]
 print("Predicciones en los datos de prueba:")
-print(y_pred)
+#print(y_pred)
 # Luego, puedes evaluar el rendimiento del modelo, por ejemplo, calculando la precisión
 
 accuracy = accuracy_score(y_test, y_pred)
@@ -183,4 +178,6 @@ print('perceptron library')
 clf = Perceptron(tol=1e-3, random_state=0)
 clf.fit(X_train,y_train)
 Perceptron()
-print(clf.predict(X_test))
+pred = clf.predict(X_test)
+accuracy = accuracy_score(y_test, pred)
+print(f'Accuracy: {accuracy:.2f}')
